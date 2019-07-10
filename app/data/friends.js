@@ -1,11 +1,11 @@
 let friends = [
   {
-    name: "Ahmed",
+    name: "Dan",
     photo: "https://www.animaker.com/assets/images/icons/comic-male.png",
     scores: [5, 1, 4, 4, 5, 1, 2, 5, 4, 1]
   },
   {
-    name: "Manila",
+    name: "Nicole",
     photo: "https://www.animaker.com/assets/images/icons/comic-female.png",
     scores: [1, 2, 1, 2, 1, 2, 1, 2, 1, 1]
   },
