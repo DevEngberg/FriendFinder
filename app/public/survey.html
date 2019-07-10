@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+    <title>Find Friend
+    </title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>About You</h2>
+            </div>
+            <form style="padding:10px" onsubmit="return false;">
+                <div class="form-group">
+                    <div style="margin:5px">
+                        <label for="name">Name(Required)</label>
+                        <input type="text" name="name" class="form-control" id="inputName" placeholder="Enter Name"
+                            required>
+                    </div>
+                    <div style="margin:5px">
+                        <label for="photo">Link to Photo Image (Required)</label>
+                        <input type="text" name="photo" class="form-control" id="inputPhoto"
+                            placeholder="link to picture" required>
+                    </div>
+                </div>
+                <br>
+                <div id="questionaires">
+
+                </div>
+                <button class="btn btn-primary col-md-12" onclick="submitResult()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- //questionaire -->
+
+
+    <template id="questionTemplate">
+        <div class="form-group">
+            <h3 class="question-number"> </h3>
+            <label>
+                <p class="question" style="font-size:20px"></p>
+            </label>
+            <select class="form-control options col-md-3" name="scores" style="cursor:pointer">
+                <option selected value="">Select Option</option>
+
+            </select>
+        </div>
+        <hr>
+    </template>
+
+    <!-- modal -->
+
+    <div class="modal fade" id="displayFriend" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" style="font-size:40px">Best Match</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="friendName" style="font-size:35px;"></p>
+                    <img id="friendImage" style="height:200px;width:auto">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+
+
+        const questionaires = [
+
+            "Your mind is always buzzing with unexplored ideas and plans.",
+            "Generally speaking, you rely more on your experience than your imagination.",
+            "You find it easy to stay relaxed and focused even when there is some pressure.",
+            "You rarely do something just out of sheer curiosity.",
+            "People can rarely upset you.",
+            "It is often difficult for you to relate to other people’s feelings.",
+            "In a discussion, truth should be more important than people’s sensitivities.",
+            "You rarely get carried away by fantasies and ideas.",
+            "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.",
+            "You feel more energetic after spending time with a group of people.",
+
+        ]
+        const options =
+            [
+                {
+                    label: "1 (Strongly Disagree)",
+                    value: 1
+                },
+                {
+                    label: "2",
+                    value: 2
+                },
+                {
+                    label: "3",
+                    value: 3
+                },
+                {
+                    label: "4",
+                    value: 4
+                },
+                {
+                    label: "5 (Strongly Agree)",
+                    value: 5
+                }
+            ];
+        displayQuestions()
+
+        function displayQuestions() {
+            const questionEl = $("")
+            var optionsSelect = $(".options");
+            questionaires.forEach(function (questionaire, index) {
+                const templateHtml = $("#questionTemplate").html();
+                const questionTemplate = $(templateHtml);
+                questionTemplate.find(".question").text(questionaire);
+                questionTemplate.find(".question-number").text(`Question ${index + 1}`);
+
+                options.forEach(function (option) {
+                    const optionEl = $("<option>");
+                    optionEl.attr("value", option.value)
+                    const opt = optionEl.text(option.label);
+                    questionTemplate.find(".options").append(optionEl);
+                })
+
+                $("#questionaires").append(questionTemplate)
+
+
+            })
+        }
+
+        function submitResult() {
+            const name = $("input[name=name]").val();
+            const photo = $("input[name=photo]").val();
+            const scores = $('select[name=scores]')
+                .map(function () {
+                    return $(this).children('option:selected').val()
+                })
+                .get();
+
+            const friend = { name, photo, scores };
+
+            let validity = true;
+            for (let score of scores) {
+                if (score === "") {
+                    validity = false;
+                    break;
+                }
+            }
+
+            if (!name || !photo || !validity) {
+                alert("Please fill all the inputs and select the answer");
+                return;
+            }
+            $.post("/api/friends", friend, function (bestFriend) {
+                console.log(bestFriend);
+                $("#friendName").text(bestFriend.name);
+                $("#friendImage").attr("src", bestFriend.photo);
+                $('#displayFriend').modal('show');
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>
